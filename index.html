@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finovate X 2026 Submission</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="page-shell">
+    <section class="hero-card" aria-labelledby="page-title">
+      <p class="eyebrow">Submission Portal</p>
+      <h1 id="page-title">FINOVATE X 2026</h1>
+      <p class="subtitle">WHERE FINANCE MEETS CODE</p>
+
+      <form id="submission-form" class="submission-form" novalidate>
+        <div class="field-group">
+          <label for="teamName">Team Name</label>
+          <input
+            id="teamName"
+            name="teamName"
+            type="text"
+            placeholder="Enter your team name"
+            autocomplete="organization"
+            required
+          >
+        </div>
+
+        <div class="field-group">
+          <label for="submissionFile">Upload Submission</label>
+          <input
+            id="submissionFile"
+            name="submissionFile"
+            type="file"
+            accept=".zip,.cpp,.py,.js,.java,.c,.cs,.ts,.tsx,.jsx,.pdf,.doc,.docx,.ppt,.pptx"
+            required
+          >
+          <p class="field-hint">Accepted formats: .zip, .cpp, .py, .js, .java, .pdf and more.</p>
+        </div>
+
+        <button id="submitButton" type="submit" class="submit-button">
+          <span class="button-text">SUBMIT NOW</span>
+          <span class="button-loader" aria-hidden="true"></span>
+        </button>
+
+        <p id="formMessage" class="form-message" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+
+  <iframe
+    id="submissionTarget"
+    name="submissionTarget"
+    title="Submission Result"
+    hidden
+  ></iframe>
+
+  <script>
+    window.APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwvfxO0nDOCd1J3NbkCJFWURKfEj4HEvL-P4GC5kodWFP2N-ZatcR7ZYiG8eVIvbSNt/exec";
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>
