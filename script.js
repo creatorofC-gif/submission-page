@@ -7,7 +7,8 @@ const submissionTarget = document.getElementById("submissionTarget");
 
 let pendingSubmission = false;
 let submissionTimeoutId = null;
-let iframeLoadHandled = false;
+let messageReceived = false;
+const SUBMISSION_LIMIT_MESSAGE = "This team has already reached the maximum of 3 submissions.";
 
 function setMessage(message, type = "") {
   formMessage.textContent = message;
@@ -21,6 +22,16 @@ function setMessage(message, type = "") {
 function setLoadingState(isLoading) {
   submitButton.disabled = isLoading;
   submitButton.classList.toggle("is-loading", isLoading);
+}
+
+function normalizeServerMessage(message) {
+  const normalizedMessage = String(message || "").trim();
+
+  if (normalizedMessage === SUBMISSION_LIMIT_MESSAGE) {
+    return SUBMISSION_LIMIT_MESSAGE;
+  }
+
+  return normalizedMessage;
 }
 
 function clearHiddenPayloadFields() {
@@ -38,7 +49,7 @@ function appendHiddenField(name, value) {
 
 function finishSubmission(message, type) {
   pendingSubmission = false;
-  iframeLoadHandled = false;
+  messageReceived = false;
   window.clearTimeout(submissionTimeoutId);
   submissionTimeoutId = null;
   clearHiddenPayloadFields();
@@ -106,7 +117,7 @@ async function submitForm(event) {
     form.target = submissionTarget.name;
 
     pendingSubmission = true;
-    iframeLoadHandled = false;
+    messageReceived = false;
     submissionTimeoutId = window.setTimeout(() => {
       if (pendingSubmission) {
         finishSubmission("Submission timed out. Check your Apps Script deployment access and try again.", "error");
@@ -130,28 +141,30 @@ window.addEventListener("message", (event) => {
     return;
   }
 
+  messageReceived = true;
+
   if (data.success) {
     form.reset();
     finishSubmission("Submission Successful", "success");
     return;
   }
 
-  finishSubmission(data.message || "Submission failed. Please try again.", "error");
+  finishSubmission(
+    normalizeServerMessage(data.message) || "Submission failed. Please try again.",
+    "error"
+  );
 });
 
 submissionTarget.addEventListener("load", () => {
-  if (!pendingSubmission || iframeLoadHandled) {
+  if (!pendingSubmission) {
     return;
   }
 
-  iframeLoadHandled = true;
-
   window.setTimeout(() => {
-    if (pendingSubmission) {
-      form.reset();
-      finishSubmission("Submission Successful", "success");
+    if (pendingSubmission && !messageReceived) {
+      finishSubmission("Submission could not be confirmed. Please check your Apps Script deployment and try again.", "error");
     }
-  }, 400);
+  }, 3000);
 });
 
 form.addEventListener("submit", submitForm);
